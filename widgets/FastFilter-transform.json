@@ -30,8 +30,8 @@
               "does not contain",
               "starts with",
               "ends with",
-              "doesn't start with",
-              "doesn't end with",
+              "does not start with",
+              "does not end with",
               "matches regex",
               "does not match regex"
             ],

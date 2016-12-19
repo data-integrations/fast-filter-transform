@@ -27,6 +27,7 @@ import co.cask.cdap.etl.api.Emitter;
 import co.cask.cdap.etl.api.PipelineConfigurer;
 import co.cask.cdap.etl.api.Transform;
 import co.cask.cdap.etl.api.TransformContext;
+import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,11 +41,10 @@ import java.util.regex.Pattern;
 @Name("FastFilter")
 @Description("Only allows records through that pass the specified criteria.")
 public final class FastFilter extends Transform<StructuredRecord, StructuredRecord> {
-  private static final Logger LOG = LoggerFactory.getLogger(FastFilter.class);
   private final Config config;
   private Pattern regexPattern;
 
-  // Required only for testing.
+  @VisibleForTesting
   public FastFilter(Config config) {
     this.config = config;
   }
@@ -107,9 +107,9 @@ public final class FastFilter extends Transform<StructuredRecord, StructuredReco
         return sourceContent.startsWith(criteria);
       case "ends with":
         return sourceContent.endsWith(criteria);
-      case "doesn't start with":
+      case "does not start with":
         return !sourceContent.startsWith(criteria);
-      case "doesn't end with":
+      case "does not end with":
         return !sourceContent.endsWith(criteria);
       case "matches regex":
         return regexPattern.matcher(sourceContent).find();

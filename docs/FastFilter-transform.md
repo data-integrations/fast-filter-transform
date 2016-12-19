@@ -8,9 +8,10 @@ Filters out messages based on a specified criteria.
 
 Configuration
 -------------
-**sourceField:** Specifies the source field to use for the filter. If the value in the sourceField is null, the record is dropped. (Macro-enabled)
+**Source Field:** Specifies the source field to use for the filter. If the value in the sourceField is null, the record is dropped. (Macro-enabled)
 
-**operator:** Specifies the operator to use for the comparison.
+**Operator:** Specifies the operator to use for the comparison.
 
-**criteria:** Specifies the criteria to use for the filter. (Macro-enabled)
+**Criteria:** Specifies the criteria to use for the filter. (Macro-enabled)
 
+**Ignore Case?** Select true if you'd like the filter to ignore case. 
