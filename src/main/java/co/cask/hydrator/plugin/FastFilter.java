@@ -28,8 +28,6 @@ import co.cask.cdap.etl.api.PipelineConfigurer;
 import co.cask.cdap.etl.api.Transform;
 import co.cask.cdap.etl.api.TransformContext;
 import com.google.common.annotations.VisibleForTesting;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -52,7 +50,8 @@ public final class FastFilter extends Transform<StructuredRecord, StructuredReco
   @Override
   public void configurePipeline(PipelineConfigurer pipelineConfigurer) throws IllegalArgumentException {
     super.configurePipeline(pipelineConfigurer);
-    config.validate();
+    Schema inputSchema = pipelineConfigurer.getStageConfigurer().getInputSchema();
+    config.validate(inputSchema);
     // Just checking that the operator is valid
     shouldAllowThrough("", config.operator, "");
     pipelineConfigurer.getStageConfigurer().setOutputSchema(pipelineConfigurer.getStageConfigurer().getInputSchema());
@@ -69,18 +68,17 @@ public final class FastFilter extends Transform<StructuredRecord, StructuredReco
   @Override
   public void transform(StructuredRecord in, Emitter<StructuredRecord> emitter) throws Exception {
     if (in.get(config.sourceField) != null) {
+      Schema inputSchema = in.getSchema();
+      if (!inputSchema.getField(config.sourceField).getSchema().isSimpleOrNullableSimple()) {
+        throw new IllegalArgumentException("Input field must be a simple type but was type: " +
+                                             inputSchema.getField(config.sourceField).getSchema().getType());
+      }
       String sourceContent = String.valueOf(in.get(config.sourceField)).trim();
       if (config.shouldIgnoreCase) {
         sourceContent = sourceContent.toLowerCase();
       }
       if (shouldAllowThrough(sourceContent, config.operator, config.criteria)) {
-        List<Schema.Field> fields = in.getSchema().getFields();
-        StructuredRecord.Builder builder = StructuredRecord.builder(in.getSchema());
-        for (Schema.Field field : fields) {
-          String name = field.getName();
-          builder.set(name, in.get(name));
-        }
-        emitter.emit(builder.build());
+        emitter.emit(in);
       }
     }
   }
@@ -150,9 +148,15 @@ public final class FastFilter extends Transform<StructuredRecord, StructuredReco
       this.shouldIgnoreCase = shouldIgnoreCase;
     }
 
-    public void validate() {
+    public void validate(Schema inputSchema) {
       if (operator.contains("regex")) {
         Pattern.compile(criteria);
+      }
+      if (!containsMacro("sourceField")) {
+        if (!inputSchema.getField(sourceField).getSchema().isSimpleOrNullableSimple()) {
+          throw new IllegalArgumentException("Input field must be a simple type but was type: " +
+                                               inputSchema.getField(sourceField).getSchema().getType());
+        }
       }
     }
   }

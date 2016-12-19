@@ -29,6 +29,9 @@ import org.junit.Test;
 public class FastFilterTest {
   private static final Schema INPUT = Schema.recordOf("input",
                                                       Schema.Field.of("a", Schema.of(Schema.Type.STRING)));
+  private static final Schema INVALID_INPUT = Schema.recordOf("input",
+                                                      Schema.Field.of("a",
+                                                                      Schema.arrayOf(Schema.of(Schema.Type.STRING))));
 
   @Test
   public void testFastFilterEquals() throws Exception {
@@ -206,5 +209,11 @@ public class FastFilterTest {
     Assert.assertEquals(2, emitter.getEmitted().size());
     transform.transform(StructuredRecord.builder(INPUT).set("a", "1 is the number CDAP is").build(), emitter);
     Assert.assertEquals(3, emitter.getEmitted().size());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testInvalidFieldType() throws Exception {
+    FastFilter.Config config = new FastFilter.Config("a", "=", "cdap", false);
+    config.validate(INVALID_INPUT);
   }
 }
