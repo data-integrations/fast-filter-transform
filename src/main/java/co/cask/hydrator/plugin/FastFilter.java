@@ -124,7 +124,6 @@ public final class FastFilter extends Transform<StructuredRecord, StructuredReco
   public static class Config extends PluginConfig {
     @Name("sourceField")
     @Description("Specifies the input field to use in the filter.")
-    @Macro
     private final String sourceField;
 
     @Name("operator")
@@ -152,11 +151,9 @@ public final class FastFilter extends Transform<StructuredRecord, StructuredReco
       if (operator.contains("regex")) {
         Pattern.compile(criteria);
       }
-      if (!containsMacro("sourceField")) {
-        if (!inputSchema.getField(sourceField).getSchema().isSimpleOrNullableSimple()) {
-          throw new IllegalArgumentException("Input field must be a simple type but was type: " +
-                                               inputSchema.getField(sourceField).getSchema().getType());
-        }
+      if (!inputSchema.getField(sourceField).getSchema().isSimpleOrNullableSimple()) {
+        throw new IllegalArgumentException("Input field must be a simple type but was type: " +
+                                             inputSchema.getField(sourceField).getSchema().getType());
       }
     }
   }
