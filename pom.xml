@@ -20,29 +20,20 @@
 
   <groupId>co.cask.hydrator.plugins</groupId>
   <artifactId>fast-filter-transform</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Fast Filter Transform</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <cdap.version>4.0.0</cdap.version>
-    <hydrator.version>1.4.0</hydrator.version>
+    <cdap.version>4.1.0</cdap.version>
     <guava.version>19.0</guava.version>
     <!-- properties for script build step that creates the config files for the artifacts -->
     <widgets.dir>widgets</widgets.dir>
     <docs.dir>docs</docs.dir>
-    <!-- This is the version range for the app.parents that this plugin is valid for. Usually this will correspond with
-         the CDAP version, but not always. -->
-    <etl.versionRange>[4.0.0,10.0.0-SNAPSHOT)</etl.versionRange>
     <!-- These are the application template artifacts that this plugin will be available for. -->
-    <app.parents>
-      system:cdap-etl-batch,
-      system:cdap-etl-realtime,
-      system:cdap-data-pipeline,
-      system:cdap-data-streams
-    </app.parents>
+    <app.parents>system:cdap-etl-batch[4.1.0,4.2.0),system:cdap-etl-realtime[4.1.0,4.2.0),system:cdap-data-pipeline[4.1.0,4.2.0),system:cdap-data-streams[4.1.0,4.2.0)</app.parents>
     <!-- this is here because project.basedir evaluates to null in the script build step -->
     <main.basedir>${project.basedir}</main.basedir>
     <!-- This is the list of packages where your code exists. You can add multiple and separated with a ; or use wildcards *. -->
@@ -80,9 +71,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>co.cask.hydrator</groupId>
-      <artifactId>hydrator-common</artifactId>
-      <version>${hydrator.version}</version>
+      <groupId>co.cask.cdap</groupId>
+      <artifactId>hydrator-test</artifactId>
+      <version>${cdap.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -137,7 +128,7 @@
               <phase>prepare-package</phase>
               <configuration>
                 <target>
-                  <script language="javascript"><![CDATA[
+                  <script language="javascript"> <![CDATA[
 
                   // for some reason, project.basedir evaluates to null if we just get the property here.
                   // so we set main.basedir to project.basedir in the pom properties, then main.basedir is used here
@@ -153,13 +144,14 @@
                   }
 
                   var parents = project.getProperty("app.parents").split(",");
-                  var parentVersions = project.getProperty("etl.versionRange");
                   var config = {
                     "parents": [ ],
                     "properties": {}
                   }
-                  for (i = 0; i < parents.length; i++) {
-                    config.parents.push(parents[i].trim() + parentVersions);
+                  for (i = 0; i < parents.length; i+=2) {
+                    // because name1[lo,hi],name2[lo,hi] gets split into "name1[lo", "hi]", "name2[lo", "hi]"
+                    // so we have to combine them again
+                    config.parents.push(parents[i] + "," + parents[i+1]);
                   }
 
                   // look in widgets directory for widget config for each plugin
