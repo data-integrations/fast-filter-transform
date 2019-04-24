@@ -20,20 +20,20 @@
 
   <groupId>co.cask.hydrator.plugins</groupId>
   <artifactId>fast-filter-transform</artifactId>
-  <version>1.7.0-SNAPSHOT</version>
+  <version>1.7.0</version>
   <packaging>jar</packaging>
 
   <name>Fast Filter Transform</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <cdap.version>4.1.0</cdap.version>
+    <cdap.version>5.1.2</cdap.version>
     <guava.version>19.0</guava.version>
     <!-- properties for script build step that creates the config files for the artifacts -->
     <widgets.dir>widgets</widgets.dir>
     <docs.dir>docs</docs.dir>
     <!-- These are the application template artifacts that this plugin will be available for. -->
-    <app.parents>system:cdap-etl-batch[4.1.0,4.2.0),system:cdap-etl-realtime[4.1.0,4.2.0),system:cdap-data-pipeline[4.1.0,4.2.0),system:cdap-data-streams[4.1.0,4.2.0)</app.parents>
+    <app.parents>system:cdap-etl-batch[5.0.0-SNAPSHOT,6.0.0-SNAPSHOT),system:cdap-etl-realtime[5.0.0-SNAPSHOT,6.0.0-SNAPSHOT),system:cdap-data-pipeline[5.0.0-SNAPSHOT,6.0.0-SNAPSHOT),system:cdap-data-streams[5.0.0-SNAPSHOT,6.0.0-SNAPSHOT)</app.parents>
     <!-- this is here because project.basedir evaluates to null in the script build step -->
     <main.basedir>${project.basedir}</main.basedir>
     <!-- This is the list of packages where your code exists. You can add multiple and separated with a ; or use wildcards *. -->
@@ -89,7 +89,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
+          <version>3.7.0</version>
           <configuration>
             <source>1.7</source>
             <target>1.7</target>
@@ -98,7 +98,7 @@
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>2.3.7</version>
+          <version>3.5.1</version>
           <extensions>true</extensions>
           <configuration>
             <instructions>
