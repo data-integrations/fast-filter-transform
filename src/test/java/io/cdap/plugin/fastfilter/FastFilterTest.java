@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016 Cask Data, Inc.
+ * Copyright © 2019 CDAP
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -14,12 +14,12 @@
  * the License.
  */
 
-package co.cask.hydrator.plugin;
+package io.cdap.plugin.fastfilter;
 
-import co.cask.cdap.api.data.format.StructuredRecord;
-import co.cask.cdap.api.data.schema.Schema;
-import co.cask.cdap.etl.api.Transform;
-import co.cask.cdap.etl.mock.common.MockEmitter;
+import io.cdap.cdap.api.data.format.StructuredRecord;
+import io.cdap.cdap.api.data.schema.Schema;
+import io.cdap.cdap.etl.api.Transform;
+import io.cdap.cdap.etl.mock.common.MockEmitter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class FastFilterTest {
     MockEmitter<StructuredRecord> emitter = new MockEmitter<>();
     transform.transform(StructuredRecord.builder(INPUT).set("a", "cdap").build(), emitter);
     Assert.assertEquals(1, emitter.getEmitted().size());
-    transform.transform(StructuredRecord.builder(INPUT).set("a", "cask").build(), emitter);
+    transform.transform(StructuredRecord.builder(INPUT).set("a", "abc").build(), emitter);
     Assert.assertEquals(1, emitter.getEmitted().size());
   }
 
