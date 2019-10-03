@@ -29,13 +29,10 @@ import org.junit.Test;
 public class FastFilterTest {
   private static final Schema INPUT = Schema.recordOf("input",
                                                       Schema.Field.of("a", Schema.of(Schema.Type.STRING)));
-  private static final Schema INVALID_INPUT = Schema.recordOf("input",
-                                                      Schema.Field.of("a",
-                                                                      Schema.arrayOf(Schema.of(Schema.Type.STRING))));
 
   @Test
   public void testFastFilterEquals() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", "=", "cdap", false);
+    FastFilterConfig config = new FastFilterConfig("a", "=", "cdap", false);
     Transform<StructuredRecord, StructuredRecord> transform = new FastFilter(config);
     transform.initialize(null);
 
@@ -48,7 +45,7 @@ public class FastFilterTest {
 
   @Test
   public void testFastFilterGreaterThan() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", ">", "m", false);
+    FastFilterConfig config = new FastFilterConfig("a", ">", "m", false);
     Transform<StructuredRecord, StructuredRecord> transform = new FastFilter(config);
     transform.initialize(null);
 
@@ -63,7 +60,7 @@ public class FastFilterTest {
 
   @Test
   public void testFastFilterGreaterThanEqual() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", ">=", "m", false);
+    FastFilterConfig config = new FastFilterConfig("a", ">=", "m", false);
     Transform<StructuredRecord, StructuredRecord> transform = new FastFilter(config);
     transform.initialize(null);
 
@@ -78,7 +75,7 @@ public class FastFilterTest {
 
   @Test
   public void testFastFilterLessThan() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", "<", "m", false);
+    FastFilterConfig config = new FastFilterConfig("a", "<", "m", false);
     Transform<StructuredRecord, StructuredRecord> transform = new FastFilter(config);
     transform.initialize(null);
 
@@ -93,7 +90,7 @@ public class FastFilterTest {
 
   @Test
   public void testFastFilterLessThanEqual() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", "<=", "m", false);
+    FastFilterConfig config = new FastFilterConfig("a", "<=", "m", false);
     Transform<StructuredRecord, StructuredRecord> transform = new FastFilter(config);
     transform.initialize(null);
 
@@ -108,7 +105,7 @@ public class FastFilterTest {
 
   @Test
   public void testFastFilterContains() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", "contains", "cdap", false);
+    FastFilterConfig config = new FastFilterConfig("a", "contains", "cdap", false);
     Transform<StructuredRecord, StructuredRecord> transform = new FastFilter(config);
     transform.initialize(null);
 
@@ -123,7 +120,7 @@ public class FastFilterTest {
 
   @Test
   public void testFastFilterDoesNotContain() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", "does not contain", "cdap", false);
+    FastFilterConfig config = new FastFilterConfig("a", "does not contain", "cdap", false);
     Transform<StructuredRecord, StructuredRecord> transform = new FastFilter(config);
     transform.initialize(null);
 
@@ -138,7 +135,7 @@ public class FastFilterTest {
 
   @Test
   public void testFastFilterStartsWith() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", "starts with", "cdap", false);
+    FastFilterConfig config = new FastFilterConfig("a", "starts with", "cdap", false);
     Transform<StructuredRecord, StructuredRecord> transform = new FastFilter(config);
     transform.initialize(null);
 
@@ -153,7 +150,7 @@ public class FastFilterTest {
 
   @Test
   public void testFastFilterEndsWith() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", "ends with", "cdap", false);
+    FastFilterConfig config = new FastFilterConfig("a", "ends with", "cdap", false);
     Transform<StructuredRecord, StructuredRecord> transform = new FastFilter(config);
     transform.initialize(null);
 
@@ -168,7 +165,7 @@ public class FastFilterTest {
 
   @Test
   public void testFastFilterMatchesRegex() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", "matches regex", "\\d", false);
+    FastFilterConfig config = new FastFilterConfig("a", "matches regex", "\\d", false);
     Transform<StructuredRecord, StructuredRecord> transform = new FastFilter(config);
     transform.initialize(null);
 
@@ -183,7 +180,7 @@ public class FastFilterTest {
 
   @Test
   public void testFastFilterDoesNotMatchRegex() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", "does not match regex", "\\d", false);
+    FastFilterConfig config = new FastFilterConfig("a", "does not match regex", "\\d", false);
     Transform<StructuredRecord, StructuredRecord> transform = new FastFilter(config);
     transform.initialize(null);
 
@@ -198,7 +195,7 @@ public class FastFilterTest {
 
   @Test
   public void testFastFilterIgnoreCase() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", "contains", "cdap", true);
+    FastFilterConfig config = new FastFilterConfig("a", "contains", "cdap", true);
     Transform<StructuredRecord, StructuredRecord> transform = new FastFilter(config);
     transform.initialize(null);
 
@@ -209,11 +206,5 @@ public class FastFilterTest {
     Assert.assertEquals(2, emitter.getEmitted().size());
     transform.transform(StructuredRecord.builder(INPUT).set("a", "1 is the number CDAP is").build(), emitter);
     Assert.assertEquals(3, emitter.getEmitted().size());
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testInvalidFieldType() throws Exception {
-    FastFilter.Config config = new FastFilter.Config("a", "=", "cdap", false);
-    config.validate(INVALID_INPUT);
   }
 }
